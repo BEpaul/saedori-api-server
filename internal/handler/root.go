@@ -17,15 +17,12 @@ type Handler struct {
 	dashboardService *service.Dashboard
 }
 
-func NewHandler(c *gin.Context, dashboardService *service.Dashboard) *Handler {
+func NewHandler(dashboardService *service.Dashboard) *Handler {
 	handlerInit.Do(func() {
 		handlerInstance = &Handler{
 			dashboardService: dashboardService,
 		}
-
-		handlerInstance.TestHandler(c)
 	})
-
 	return handlerInstance
 }
 
