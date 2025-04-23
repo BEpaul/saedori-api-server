@@ -1,34 +1,61 @@
 package repository
 
 import (
+	"context"
+	"fmt"
 	"time"
 
 	"github.com/bestkkii/saedori-api-server/internal/model"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type DashboardRepository struct {
-	// Access DB (mongoDB)
-
-	// for test
-	keywordList []*model.Keyword
+	mongoDB *mongo.Client
 }
 
 func newDashboardRepository() *DashboardRepository {
+	client, err := ConnectMongoDB()
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	return &DashboardRepository{
-		keywordList: []*model.Keyword{
-			{
-				Keyword:   "test",
-				CreatedAt: time.Now(),
-			},
-			{
-				Keyword:   "test2",
-				CreatedAt: time.Now(),
-			},
-		},
+		mongoDB: client,
 	}
 }
 
-// GetKeywordList 키워드 목록 조회
-func (d *DashboardRepository) GetKeywordList() ([]*model.Keyword, error) {
-	return d.keywordList, nil
+func (d *DashboardRepository) getCollection(collectionName string) *mongo.Collection {
+	database := d.mongoDB.Database("saedori")
+	collection := database.Collection(collectionName)
+	return collection
+}
+
+func (d *DashboardRepository) GetKeywords() ([]*model.Keyword, error) {
+	collection := d.getCollection("Keyword")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		fmt.Println("Error getting keyword list:", err)
+		return nil, err
+	}
+
+	var keywords []*model.Keyword
+	for cursor.Next(ctx) {
+		var keyword model.Keyword
+		if err := cursor.Decode(&keyword); err != nil {
+			fmt.Println("Error decoding keyword:", err)
+			return nil, err
+		}
+		keywords = append(keywords, &keyword)
+	}
+
+	if err := cursor.Err(); err != nil {
+		fmt.Println("Cursor error:", err)
+		return nil, err
+	}
+
+	return keywords, nil
 }

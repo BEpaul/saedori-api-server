@@ -17,7 +17,6 @@ func NewRouter(service *service.Service) *Router {
 
 	h := handler.NewHandler(service.Dashboard)
 
-	r.GET("/test", h.TestHandler)
 	r.GET("/keyword", h.GetKeywordList)
 
 	return r

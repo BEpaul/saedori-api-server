@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"net/http"
 	"sync"
 
 	"github.com/bestkkii/saedori-api-server/internal/model"
@@ -28,28 +27,16 @@ func NewHandler(dashboardService *service.Dashboard) *Handler {
 	return handlerInstance
 }
 
-func (h *Handler) TestHandler(c *gin.Context) {
-	result, err := h.dashboardService.GetKeywordList()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"result": result,
-	})
-}
-
+// Top3 Keyword 목록 조회
 func (h *Handler) GetKeywordList(c *gin.Context) {
 	keywords, err := h.dashboardService.GetKeywordList()
 	if err != nil {
-		h.failedResponse(c, pkg.NewApiResponse("FAILED", err))
+		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
 		return
 	}
 
 	h.okResponse(c, model.GetKeywordListResponse{
-		ApiResponse: pkg.NewApiResponse("SUCCESS", nil),
+		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		Keywords:    keywords,
 	})
 }
