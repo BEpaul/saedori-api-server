@@ -15,9 +15,10 @@ func NewRouter(service *service.Service) *Router {
 		engine: gin.Default(),
 	}
 
-	r.GET("/", func(c *gin.Context) {
-		handler.NewHandler(c, service.Dashboard)
-	})
+	h := handler.NewHandler(service.Dashboard)
+
+	r.GET("/test", h.TestHandler)
+	r.GET("/keyword", h.GetKeywordList)
 
 	return r
 }
