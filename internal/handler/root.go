@@ -73,28 +73,30 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	})
 }
 
-<<<<<<< HEAD
-// News 목록 조회
-func (h *Handler) GetNewsList(c *gin.Context) {
-	news, err := h.dashboardService.GetNewsList()
-=======
 func (h *Handler) GetRealtimeSearchDetail(c *gin.Context) {
 	realtimeSearchDetail, err := h.dashboardService.GetRealtimeSearchDetailList()
 
->>>>>>> upstream/main
 	if err != nil {
 		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
 		return
 	}
 
-<<<<<<< HEAD
-	h.okResponse(c, model.GetNewsListResponse{
-		ApiResponse: pkg.NewApiResponse("SUCCESS"),
-		News:        news,
-=======
 	h.okResponse(c, model.RealtimeSearchDetailResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		RealtimeSearchDetailWrapper: realtimeSearchDetail.RealtimeSearchDetailWrapper,
->>>>>>> upstream/main
+	})
+}
+
+// News 목록 조회
+func (h *Handler) GetNewsList(c *gin.Context) {
+	news, err := h.dashboardService.GetNewsList()
+	if err != nil {
+		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
+		return
+	}
+
+	h.okResponse(c, model.NewsResponse{
+		ApiResponse: pkg.NewApiResponse("SUCCESS"),
+		News:        news,
 	})
 }

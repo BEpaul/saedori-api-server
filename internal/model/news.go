@@ -45,7 +45,6 @@ type NewsResponse struct {
 
 // 키워드 처리를 위한 모델
 type NewsKeywords struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	CreatedAt int               `bson:"created_at" json:"created_at"`
 	Keywords  []string          `bson:"keyword" json:"keyword"`
 	Category  string            `bson:"category" json:"category"`
