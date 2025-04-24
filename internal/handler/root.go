@@ -40,3 +40,27 @@ func (h *Handler) GetKeywordList(c *gin.Context) {
 		Keywords:    keywords,
 	})
 }
+
+// 관심사 분야 쿼리 파라미터 매칭
+func (h *Handler) GetInterestDetail (c *gin.Context) {
+	category := c.DefaultQuery("category", "default_category")
+
+	if category == "music" {
+		h.GetMusicList(c)
+		return
+	}
+}
+
+// Music 순위 조회
+func (h *Handler) GetMusicList(c *gin.Context) {
+	musics, err := h.dashboardService.GetMusicList()
+	if err != nil {
+		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
+		return
+	}
+
+	h.okResponse(c, model.MusicResponse{
+		ApiResponse: pkg.NewApiResponse("SUCCESS"),
+		Musics:   musics,
+	})
+}

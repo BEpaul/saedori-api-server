@@ -59,3 +59,32 @@ func (d *DashboardRepository) GetKeywords() ([]*model.Keyword, error) {
 
 	return keywords, nil
 }
+
+func (d *DashboardRepository) GetMusics() ([]*model.Music, error) {
+	collection := d.getCollection("Music")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		fmt.Println("Error getting music list:", err)
+		return nil, err
+	}
+
+	var musics []*model.Music
+	for cursor.Next(ctx) {
+		var music model.Music
+		if err := cursor.Decode(&music); err != nil {
+			fmt.Println("Error decoding music:", err)
+			return nil, err
+		}
+		musics = append(musics, &music)
+	}
+
+	if err := cursor.Err(); err != nil {
+		fmt.Println("Cursor error:", err)
+		return nil, err
+	}
+
+	return musics, nil
+}
