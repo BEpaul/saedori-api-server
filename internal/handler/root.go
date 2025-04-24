@@ -51,8 +51,7 @@ func (h *Handler) GetInterestDetail(c *gin.Context) {
 	} else if category == "realtime-search" {
 		h.GetRealtimeSearchDetail(c)
 		return
-	}
-	if category == "news" {
+	} else if category == "news" {
 		h.GetNewsDetails(c)
 		return
 	}
