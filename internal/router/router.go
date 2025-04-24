@@ -16,8 +16,10 @@ func NewRouter(service *service.Service) *Router {
 	}
 
 	h := handler.NewHandler(service.Dashboard)
+	apiV1 := r.engine.Group("/api/v1")
 
-	r.GET("/keyword", h.GetKeywordList)
+	apiV1.GET("/keywords", h.GetKeywordList)
+	apiV1.GET("/test", h.Test)
 
 	return r
 }
