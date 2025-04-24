@@ -22,3 +22,11 @@ func (d *Dashboard) GetKeywordList() ([]*model.Keyword, error) {
 	}
 	return keywordList, nil
 }
+
+func (d *Dashboard) GetMusicList() ([]*model.Music, error) {
+	musicList, err := d.dashboardRepository.GetMusics()
+	if err != nil {
+		return nil, err
+	}
+	return musicList, nil
+}
