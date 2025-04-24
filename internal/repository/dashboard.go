@@ -88,3 +88,32 @@ func (d *DashboardRepository) GetMusics() ([]*model.Music, error) {
 
 	return musics, nil
 }
+
+func (d *DashboardRepository) GetNews() ([]*model.News, error) {
+	collection := d.getCollection("News")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		fmt.Println("Error getting news list:", err)
+		return nil, err
+	}
+
+	var news []*model.News
+	for cursor.Next(ctx) {
+		var newsItem model.News
+		if err := cursor.Decode(&newsItem); err != nil {
+			fmt.Println("Error decoding news:", err)
+			return nil, err
+		}
+		news = append(news, &newsItem)
+	}
+
+	if err := cursor.Err(); err != nil {
+		fmt.Println("Cursor error:", err)
+		return nil, err
+	}
+
+	return news, nil
+}

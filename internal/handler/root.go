@@ -42,11 +42,15 @@ func (h *Handler) GetKeywordList(c *gin.Context) {
 }
 
 // 관심사 분야 쿼리 파라미터 매칭
-func (h *Handler) GetInterestDetail (c *gin.Context) {
+func (h *Handler) GetInterestDetail(c *gin.Context) {
 	category := c.DefaultQuery("category", "default_category")
 
 	if category == "music" {
 		h.GetMusicList(c)
+		return
+	}
+	if category == "news" {
+		h.GetNewsList(c)
 		return
 	}
 }
@@ -62,5 +66,19 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	h.okResponse(c, model.MusicResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		Musics:   musics,
+	})
+}
+
+// News 목록 조회
+func (h *Handler) GetNewsList(c *gin.Context) {
+	news, err := h.dashboardService.GetNewsList()
+	if err != nil {
+		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
+		return
+	}
+
+	h.okResponse(c, model.GetNewsListResponse{
+		ApiResponse: pkg.NewApiResponse("SUCCESS"),
+		News:        news,
 	})
 }

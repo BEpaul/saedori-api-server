@@ -30,3 +30,11 @@ func (d *Dashboard) GetMusicList() ([]*model.Music, error) {
 	}
 	return musicList, nil
 }
+
+func (d *Dashboard) GetNewsList() ([]*model.News, error) {
+	newsList, err := d.dashboardRepository.GetNews()
+	if err != nil {
+		return nil, err
+	}
+	return newsList, nil
+}
