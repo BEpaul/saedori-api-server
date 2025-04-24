@@ -20,7 +20,6 @@ func NewRouter(service *service.Service) *Router {
 
 	apiV1.GET("/keywords", h.GetKeywordList)
 	apiV1.GET("/interest/detail", h.GetInterestDetail)
-
 	return r
 }
 
