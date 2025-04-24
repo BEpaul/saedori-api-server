@@ -48,12 +48,16 @@ func (h *Handler) GetInterestDetail (c *gin.Context) {
 	if category == "music" {
 		h.GetMusicList(c)
 		return
+	} else if category == "realtime-search" {
+		h.GetRealtimeSearchDetail(c)
+		return
 	}
 }
 
 // Music 순위 조회
 func (h *Handler) GetMusicList(c *gin.Context) {
 	musics, err := h.dashboardService.GetMusicList()
+
 	if err != nil {
 		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
 		return
@@ -62,5 +66,19 @@ func (h *Handler) GetMusicList(c *gin.Context) {
 	h.okResponse(c, model.MusicResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		Musics:   musics,
+	})
+}
+
+func (h *Handler) GetRealtimeSearchDetail(c *gin.Context) {
+	realtimeSearchDetail, err := h.dashboardService.GetRealtimeSearchDetailList()
+
+	if err != nil {
+		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
+		return
+	}
+
+	h.okResponse(c, model.RealtimeSearchDetailResponse{
+		ApiResponse: pkg.NewApiResponse("SUCCESS"),
+		RealtimeSearchDetailWrapper: realtimeSearchDetail.RealtimeSearchDetailWrapper,
 	})
 }
