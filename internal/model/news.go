@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/bestkkii/saedori-api-server/pkg"
-	"go.mongodb.org/mongo-driver/bson/primitive" // 오늘의 단어
 )
 
 // FastAPI 응답을 위한 모델
@@ -79,4 +78,15 @@ func ProcessNewsKeywords(newsItems []NewsItem) []string {
 	}
 	
 	return keywords
+}
+
+// 뉴스 요약 응답을 위한 모델
+type NewsSummary struct {
+	Company string `json:"company"`
+	Title   string `json:"title"`
+}
+
+type NewsSummaryResponse struct {
+	*pkg.ApiResponse
+	NewsSummary []NewsSummary `json:"news_summary" binding:"required"`
 }

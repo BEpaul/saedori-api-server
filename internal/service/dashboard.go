@@ -3,6 +3,8 @@ package service
 import (
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"github.com/bestkkii/saedori-api-server/internal/repository"
+	"regexp"
+	"strings"
 )
 
 type Dashboard struct {
@@ -79,10 +81,46 @@ func (d *Dashboard) GetRealtimeSearchDetailList() (*model.RealtimeSearchDetailRe
 	return &realtimeSearchDetailResponse, nil
 }
 
-func (d *Dashboard) GetNewsList() ([]*model.News, error) {
-	newsList, err := d.dashboardRepository.GetNews()
+func (d *Dashboard) GetNewsDetails() ([]*model.News, error) {
+	newsList, err := d.dashboardRepository.GetNewsDetails()
 	if err != nil {
 		return nil, err
 	}
 	return newsList, nil
+}
+
+func (d *Dashboard) GetNewsSummary() ([]model.NewsSummary, error) {
+	news, err := d.dashboardRepository.GetNewsSummary()
+	if err != nil {
+		return nil, err
+	}
+
+	// 최대 5개의 뉴스만 처리
+	summaryCount := 5
+	if len(news.NewsItems) < summaryCount {
+		summaryCount = len(news.NewsItems)
+	}
+
+	summaries := make([]model.NewsSummary, 0, summaryCount)
+	for i := 0; i < summaryCount; i++ {
+		item := news.NewsItems[i]
+		
+		// [ ]로 감싸진 문자열 제거
+		re := regexp.MustCompile(`\[.*?\]`)
+		title := re.ReplaceAllString(item.Title, "")
+		
+		// 앞쪽 공백 제거
+		title = strings.TrimSpace(title)
+		
+		// 모든 특수문자 제거 (한글, 영문, 숫자, 공백만 남김)
+		re = regexp.MustCompile(`[^가-힣a-zA-Z0-9\s]`)
+		title = re.ReplaceAllString(title, "")
+
+		summaries = append(summaries, model.NewsSummary{
+			Company: item.Company,
+			Title:   title,
+		})
+	}
+
+	return summaries, nil
 }
