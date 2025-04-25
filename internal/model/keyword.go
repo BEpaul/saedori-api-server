@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/bestkkii/saedori-api-server/pkg"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // MongoDB Document 구조체
@@ -21,5 +20,5 @@ type KeywordsResponse struct {
 
 type GetKeywordsListResponse struct {
 	*pkg.ApiResponse
-	Keywords []KeywordResponse `json:"top3_keywords"`
+	Keywords []*Keywords `json:"top3_keywords"`
 }

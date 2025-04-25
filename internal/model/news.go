@@ -1,9 +1,6 @@
 package model
 
 import (
-	"regexp"
-	"strings"
-
 	"github.com/bestkkii/saedori-api-server/pkg"
 )
 
@@ -36,7 +33,7 @@ type NewsItem struct {
 	URL     string `bson:"url" json:"url" binding:"required"`
 }
 
-// API 응답을 위한 모델
+// API 응답(상세조회)을 위한 모델
 type NewsResponse struct {
 	*pkg.ApiResponse
 	News []*News `json:"result" binding:"required"`
