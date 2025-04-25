@@ -51,9 +51,8 @@ func (h *Handler) GetInterestDetail(c *gin.Context) {
 	} else if category == "realtime-search" {
 		h.GetRealtimeSearchDetail(c)
 		return
-	}
-	if category == "news" {
-		h.GetNewsList(c)
+	} else if category == "news" {
+		h.GetNewsDetails(c)
 		return
 	}
 }
@@ -87,9 +86,9 @@ func (h *Handler) GetRealtimeSearchDetail(c *gin.Context) {
 	})
 }
 
-// News 목록 조회
-func (h *Handler) GetNewsList(c *gin.Context) {
-	news, err := h.dashboardService.GetNewsList()
+// News 상세 목록 조회
+func (h *Handler) GetNewsDetails(c *gin.Context) {
+	news, err := h.dashboardService.GetNewsDetails()
 	if err != nil {
 		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
 		return
@@ -98,5 +97,19 @@ func (h *Handler) GetNewsList(c *gin.Context) {
 	h.okResponse(c, model.NewsResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		News:        news,
+	})
+}
+
+// News 요약 조회
+func (h *Handler) GetNewsSummary(c *gin.Context) {
+	summaries, err := h.dashboardService.GetNewsSummary()
+	if err != nil {
+		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
+		return
+	}
+
+	h.okResponse(c, model.NewsSummaryResponse{
+		ApiResponse: pkg.NewApiResponse("SUCCESS"),
+		NewsSummary: summaries,
 	})
 }

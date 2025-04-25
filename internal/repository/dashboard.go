@@ -155,7 +155,7 @@ func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, 
     return results, nil
 }
 
-func (d *DashboardRepository) GetNews() ([]*model.News, error) {
+func (d *DashboardRepository) GetNewsDetails() ([]*model.News, error) {
 	collection := d.getCollection("News")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -182,4 +182,22 @@ func (d *DashboardRepository) GetNews() ([]*model.News, error) {
 	}
 
 	return news, nil
+}
+
+func (d *DashboardRepository) GetNewsSummary() (*model.News, error) {
+	collection := d.getCollection("News")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// created_at 인덱스를 활용하여 최신 데이터 조회
+	opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
+	
+	var news model.News
+	err := collection.FindOne(ctx, bson.M{}, opts).Decode(&news)
+	if err != nil {
+		fmt.Println("Error getting latest news:", err)
+		return nil, err
+	}
+
+	return &news, nil
 }

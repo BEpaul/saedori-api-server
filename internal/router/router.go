@@ -19,6 +19,7 @@ func NewRouter(service *service.Service) *Router {
 	apiV1 := r.engine.Group("/api/v1")
 
 	apiV1.GET("/keywords", h.GetKeywordList)
+	// apiV1.GET("/interest", h.어쩌구저쩌구)
 	apiV1.GET("/interest/detail", h.GetInterestDetail)
 	return r
 }
