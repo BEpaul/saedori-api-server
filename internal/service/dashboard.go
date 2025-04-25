@@ -17,12 +17,12 @@ func newDashboardService(dashboardRepository *repository.DashboardRepository) *D
 	}
 }
 
-func (d *Dashboard) GetKeywordList() ([]*model.Keyword, error) {
-	keywordList, err := d.dashboardRepository.GetKeywords()
+func (d *Dashboard) GetKeywordsList() ([]*model.Keywords, error) {
+	keywordsList, err := d.dashboardRepository.keywordRepository.GetKeywords()
 	if err != nil {
 		return nil, err
 	}
-	return keywordList, nil
+	return keywordsList, nil
 }
 
 func (d *Dashboard) GetMusicList() ([]*model.Music, error) {
@@ -82,45 +82,9 @@ func (d *Dashboard) GetRealtimeSearchDetailList() (*model.RealtimeSearchDetailRe
 }
 
 func (d *Dashboard) GetNewsDetails() ([]*model.News, error) {
-	newsList, err := d.dashboardRepository.GetNewsDetails()
+	newsList, err := d.dashboardRepository.newsRepository.GetNewsDetails()
 	if err != nil {
 		return nil, err
 	}
 	return newsList, nil
-}
-
-func (d *Dashboard) GetNewsSummary() ([]model.NewsSummary, error) {
-	news, err := d.dashboardRepository.GetNewsSummary()
-	if err != nil {
-		return nil, err
-	}
-
-	// 최대 5개의 뉴스만 처리
-	summaryCount := 5
-	if len(news.NewsItems) < summaryCount {
-		summaryCount = len(news.NewsItems)
-	}
-
-	summaries := make([]model.NewsSummary, 0, summaryCount)
-	for i := 0; i < summaryCount; i++ {
-		item := news.NewsItems[i]
-		
-		// [ ]로 감싸진 문자열 제거
-		re := regexp.MustCompile(`\[.*?\]`)
-		title := re.ReplaceAllString(item.Title, "")
-		
-		// 앞쪽 공백 제거
-		title = strings.TrimSpace(title)
-		
-		// 모든 특수문자 제거 (한글, 영문, 숫자, 공백만 남김)
-		re = regexp.MustCompile(`[^가-힣a-zA-Z0-9\s]`)
-		title = re.ReplaceAllString(title, "")
-
-		summaries = append(summaries, model.NewsSummary{
-			Company: item.Company,
-			Title:   title,
-		})
-	}
-
-	return summaries, nil
 }

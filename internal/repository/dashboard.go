@@ -13,6 +13,8 @@ import (
 
 type DashboardRepository struct {
 	mongoDB *mongo.Client
+	keywordRepository *KeywordRepository
+	newsRepository *NewsRepository
 }
 
 func newDashboardRepository() *DashboardRepository {
@@ -23,6 +25,8 @@ func newDashboardRepository() *DashboardRepository {
 
 	return &DashboardRepository{
 		mongoDB: client,
+		keywordRepository: newKeywordRepository(client),
+		newsRepository: newNewsRepository(client),
 	}
 }
 
@@ -30,30 +34,6 @@ func (d *DashboardRepository) getCollection(collectionName string) *mongo.Collec
 	database := d.mongoDB.Database("saedori")
 	collection := database.Collection(collectionName)
 	return collection
-}
-
-func (d *DashboardRepository) GetKeywords() ([]*model.Keyword, error) {
-	collection := d.getCollection("Keyword")
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	categories := []string{"music", "search_word", "news", "coin"}
-	var keywords []*model.Keyword
-
-	for _, category := range categories {
-		opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
-		var keyword model.Keyword
-		err := collection.FindOne(ctx, bson.M{"category": category}, opts).Decode(&keyword)
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				continue
-			}
-			return nil, err
-		}
-		keywords = append(keywords, &keyword)
-	}
-
-	return keywords, nil
 }
 
 func (d *DashboardRepository) GetMusics() ([]*model.Music, error) {
@@ -115,7 +95,7 @@ func (d *DashboardRepository) GetRealtimeSearchDetails() ([]*model.RealtimeSearc
 	return krList, usList, nil
 }
 
-	// 국가별로 데이터를 조회하는 함수
+// 국가별로 데이터를 조회하는 함수
 func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, country string, count int64) ([]*model.RealtimeSearch, error) {
     collection := d.getCollection("RealtimeSearch")
 
@@ -148,51 +128,4 @@ func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, 
     }
 	
     return results, nil
-}
-
-func (d *DashboardRepository) GetNewsDetails() ([]*model.News, error) {
-	collection := d.getCollection("News")
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		fmt.Println("Error getting news list:", err)
-		return nil, err
-	}
-
-	var news []*model.News
-	for cursor.Next(ctx) {
-		var newsItem model.News
-		if err := cursor.Decode(&newsItem); err != nil {
-			fmt.Println("Error decoding news:", err)
-			return nil, err
-		}
-		news = append(news, &newsItem)
-	}
-
-	if err := cursor.Err(); err != nil {
-		fmt.Println("Cursor error:", err)
-		return nil, err
-	}
-
-	return news, nil
-}
-
-func (d *DashboardRepository) GetNewsSummary() (*model.News, error) {
-	collection := d.getCollection("News")
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	// created_at 인덱스를 활용하여 최신 데이터 조회
-	opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
-	
-	var news model.News
-	err := collection.FindOne(ctx, bson.M{}, opts).Decode(&news)
-	if err != nil {
-		fmt.Println("Error getting latest news:", err)
-		return nil, err
-	}
-
-	return &news, nil
 }
