@@ -12,9 +12,9 @@ import (
 )
 
 type DashboardRepository struct {
-	mongoDB *mongo.Client
-	keywordRepository *KeywordRepository
-	newsRepository *NewsRepository
+	MongoDB *mongo.Client
+	NewsRepository *NewsRepository
+	KeywordRepository *KeywordRepository
 }
 
 func newDashboardRepository() *DashboardRepository {
@@ -24,14 +24,14 @@ func newDashboardRepository() *DashboardRepository {
 	}
 
 	return &DashboardRepository{
-		mongoDB: client,
-		keywordRepository: newKeywordRepository(client),
-		newsRepository: newNewsRepository(client),
+		MongoDB: client,
+		NewsRepository: newNewsRepository(client),
+		KeywordRepository: newKeywordRepository(client),
 	}
 }
 
 func (d *DashboardRepository) getCollection(collectionName string) *mongo.Collection {
-	database := d.mongoDB.Database("saedori")
+	database := d.MongoDB.Database("saedori")
 	collection := database.Collection(collectionName)
 	return collection
 }

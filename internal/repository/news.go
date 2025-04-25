@@ -12,17 +12,17 @@ import (
 )
 
 type NewsRepository struct {
-	mongoDB *mongo.Client
+	MongoDB *mongo.Client
 }
 
 func newNewsRepository(mongoDB *mongo.Client) *NewsRepository {
 	return &NewsRepository{
-		mongoDB: mongoDB,
+		MongoDB: mongoDB,
 	}
 }
 
 func (n *NewsRepository) GetNewsDetails() ([]*model.News, error) {
-	database := n.mongoDB.Database("saedori")
+	database := n.MongoDB.Database("saedori")
 	collection := database.Collection("News")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -52,7 +52,7 @@ func (n *NewsRepository) GetNewsDetails() ([]*model.News, error) {
 }
 
 func (n *NewsRepository) GetNewsSummary() (*model.News, error) {
-	database := n.mongoDB.Database("saedori")
+	database := n.MongoDB.Database("saedori")
 	collection := database.Collection("News")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()

@@ -3,8 +3,6 @@ package service
 import (
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"github.com/bestkkii/saedori-api-server/internal/repository"
-	"regexp"
-	"strings"
 )
 
 type Dashboard struct {
@@ -18,7 +16,7 @@ func newDashboardService(dashboardRepository *repository.DashboardRepository) *D
 }
 
 func (d *Dashboard) GetKeywordsList() ([]*model.Keywords, error) {
-	keywordsList, err := d.dashboardRepository.keywordRepository.GetKeywords()
+	keywordsList, err := d.dashboardRepository.KeywordRepository.GetKeywords()
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +80,7 @@ func (d *Dashboard) GetRealtimeSearchDetailList() (*model.RealtimeSearchDetailRe
 }
 
 func (d *Dashboard) GetNewsDetails() ([]*model.News, error) {
-	newsList, err := d.dashboardRepository.newsRepository.GetNewsDetails()
+	newsList, err := d.dashboardRepository.NewsRepository.GetNewsDetails()
 	if err != nil {
 		return nil, err
 	}
