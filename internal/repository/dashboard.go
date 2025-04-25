@@ -32,17 +32,17 @@ func (d *DashboardRepository) getCollection(collectionName string) *mongo.Collec
 	return collection
 }
 
-func (d *DashboardRepository) GetKeywords() ([]*model.Keyword, error) {
+func (d *DashboardRepository) GetKeywords() ([]*model.Keywords, error) {
 	collection := d.getCollection("Keyword")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	categories := []string{"music", "search_word", "news", "coin"}
-	var keywords []*model.Keyword
+	var keywords []*model.Keywords
 
 	for _, category := range categories {
 		opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
-		var keyword model.Keyword
+		var keyword model.Keywords
 		err := collection.FindOne(ctx, bson.M{"category": category}, opts).Decode(&keyword)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {

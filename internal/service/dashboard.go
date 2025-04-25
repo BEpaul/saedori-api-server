@@ -17,7 +17,7 @@ func newDashboardService(dashboardRepository *repository.DashboardRepository) *D
 	}
 }
 
-func (d *Dashboard) GetKeywordList() ([]*model.Keyword, error) {
+func (d *Dashboard) GetKeywordsList() ([]*model.Keywords, error) {
 	keywordList, err := d.dashboardRepository.GetKeywords()
 	if err != nil {
 		return nil, err

@@ -28,14 +28,14 @@ func NewHandler(dashboardService *service.Dashboard) *Handler {
 }
 
 // Top3 Keyword 목록 조회
-func (h *Handler) GetKeywordList(c *gin.Context) {
-	keywords, err := h.dashboardService.GetKeywordList()
+func (h *Handler) GetKeywordsList(c *gin.Context) {
+	keywords, err := h.dashboardService.GetKeywordsList()
 	if err != nil {
 		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
 		return
 	}
 
-	h.okResponse(c, model.GetKeywordListResponse{
+	h.okResponse(c, model.GetKeywordsListResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		Keywords:    keywords,
 	})
