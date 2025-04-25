@@ -37,25 +37,20 @@ func (d *DashboardRepository) GetKeywords() ([]*model.Keyword, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		fmt.Println("Error getting keyword list:", err)
-		return nil, err
-	}
-
+	categories := []string{"music", "search_word", "news", "coin"}
 	var keywords []*model.Keyword
-	for cursor.Next(ctx) {
+
+	for _, category := range categories {
+		opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
 		var keyword model.Keyword
-		if err := cursor.Decode(&keyword); err != nil {
-			fmt.Println("Error decoding keyword:", err)
+		err := collection.FindOne(ctx, bson.M{"category": category}, opts).Decode(&keyword)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				continue
+			}
 			return nil, err
 		}
 		keywords = append(keywords, &keyword)
-	}
-
-	if err := cursor.Err(); err != nil {
-		fmt.Println("Cursor error:", err)
-		return nil, err
 	}
 
 	return keywords, nil
