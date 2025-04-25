@@ -21,37 +21,7 @@ func newNewsRepository(mongoDB *mongo.Client) *NewsRepository {
 	}
 }
 
-func (n *NewsRepository) GetNewsDetails() ([]*model.News, error) {
-	database := n.MongoDB.Database("saedori")
-	collection := database.Collection("News")
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		fmt.Println("Error getting news list:", err)
-		return nil, err
-	}
-
-	var news []*model.News
-	for cursor.Next(ctx) {
-		var newsItem model.News
-		if err := cursor.Decode(&newsItem); err != nil {
-			fmt.Println("Error decoding news:", err)
-			return nil, err
-		}
-		news = append(news, &newsItem)
-	}
-
-	if err := cursor.Err(); err != nil {
-		fmt.Println("Cursor error:", err)
-		return nil, err
-	}
-
-	return news, nil
-}
-
-func (n *NewsRepository) GetNewsSummary() (*model.News, error) {
+func (n *NewsRepository) GetNewsDetails() (*model.News, error) {
 	database := n.MongoDB.Database("saedori")
 	collection := database.Collection("News")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
