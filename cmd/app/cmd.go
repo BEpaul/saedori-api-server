@@ -14,9 +14,9 @@ type Cmd struct {
 	router     *router.Router
 }
 
-func NewCmd(filePath string) *Cmd {
+func NewCmd() *Cmd {
 	c := &Cmd{
-		config: config.NewConfig(filePath),
+		config: config.NewConfig(),
 	}
 
 	c.repository = repository.NewRepository()

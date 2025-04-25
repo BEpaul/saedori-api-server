@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/naoina/toml"
@@ -8,11 +9,19 @@ import (
 
 type Config struct {
 	Server struct {
-		Port string
+		Port string `toml:"port"`
+		CrawlApiBaseUrl string `toml:"crawl_api_base_url"`
 	}
 }
 
-func NewConfig(filePath string) *Config {
+func NewConfig() *Config {
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "dev"
+	}
+	
+	filePath := fmt.Sprintf("config.%s.toml", env)
+	
 	c := new(Config)
 
 	if file, err := os.Open(filePath); err != nil {
