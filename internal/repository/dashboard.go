@@ -41,28 +41,18 @@ func (d *DashboardRepository) GetMusics() ([]*model.Music, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	cursor, err := collection.Find(ctx, bson.M{})
+	opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
+	var music model.Music
+	err := collection.FindOne(ctx, bson.M{}, opts).Decode(&music)
 	if err != nil {
-		fmt.Println("Error getting music list:", err)
-		return nil, err
-	}
-
-	var musics []*model.Music
-	for cursor.Next(ctx) {
-		var music model.Music
-		if err := cursor.Decode(&music); err != nil {
-			fmt.Println("Error decoding music:", err)
-			return nil, err
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
 		}
-		musics = append(musics, &music)
-	}
-
-	if err := cursor.Err(); err != nil {
-		fmt.Println("Cursor error:", err)
+		fmt.Println("Error getting music:", err)
 		return nil, err
 	}
 
-	return musics, nil
+	return []*model.Music{&music}, nil
 }
 
 func (d *DashboardRepository) GetRealtimeSearches() ([]*model.RealtimeSearch, error) {
