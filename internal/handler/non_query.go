@@ -11,14 +11,14 @@ import (
 **/
 
 // Top3 Keyword 목록 조회
-func (h *Handler) GetKeywordList(c *gin.Context) {
-	keywords, err := h.dashboardService.GetKeywordList()
+func (h *Handler) GetKeywordsList(c *gin.Context) {
+	keywords, err := h.dashboardService.GetKeywordsList()
 	if err != nil {
 		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
 		return
 	}
 
-	h.okResponse(c, model.GetKeywordListResponse{
+	h.okResponse(c, model.GetKeywordsListResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		Keywords:    keywords,
 	})
@@ -64,19 +64,5 @@ func (h *Handler) GetNewsDetails(c *gin.Context) {
 	h.okResponse(c, model.NewsResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		News:        news,
-	})
-}
-
-// News 요약 조회
-func (h *Handler) GetNewsSummary(c *gin.Context) {
-	summaries, err := h.dashboardService.GetNewsSummary()
-	if err != nil {
-		h.failedResponse(c, pkg.NewApiResponse("FAILED"))
-		return
-	}
-
-	h.okResponse(c, model.NewsSummaryResponse{
-		ApiResponse: pkg.NewApiResponse("SUCCESS"),
-		NewsSummary: summaries,
 	})
 }

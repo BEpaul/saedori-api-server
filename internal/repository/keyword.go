@@ -11,17 +11,17 @@ import (
 )
 
 type KeywordRepository struct {
-	mongoDB *mongo.Client
+	MongoDB *mongo.Client
 }
 
 func newKeywordRepository(mongoDB *mongo.Client) *KeywordRepository {
 	return &KeywordRepository{
-		mongoDB: mongoDB,
+		MongoDB: mongoDB,
 	}
 }
 
 func (k *KeywordRepository) GetKeywords() ([]*model.Keywords, error) {
-	database := k.mongoDB.Database("saedori")
+	database := k.MongoDB.Database("saedori")
 	collection := database.Collection("Keyword")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
