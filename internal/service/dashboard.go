@@ -79,7 +79,7 @@ func (d *Dashboard) GetRealtimeSearchDetailList() (*model.RealtimeSearchDetailRe
 	return &realtimeSearchDetailResponse, nil
 }
 
-func (d *Dashboard) GetNewsDetails() ([]*model.News, error) {
+func (d *Dashboard) GetNewsDetails() (*model.News, error) {
 	newsList, err := d.dashboardRepository.NewsRepository.GetNewsDetails()
 	if err != nil {
 		return nil, err

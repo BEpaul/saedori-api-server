@@ -63,6 +63,6 @@ func (h *Handler) GetNewsDetails(c *gin.Context) {
 
 	h.okResponse(c, model.NewsResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
-		News:        news,
+		News:        []*model.News{news},
 	})
 }
