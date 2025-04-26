@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"github.com/bestkkii/saedori-api-server/internal/repository"
 )
@@ -88,41 +89,35 @@ func (d *Dashboard) GetNewsDetails() (*model.News, error) {
 }
 
 // GetDownloadData returns data for download based on categories and date range
-func (d *Dashboard) GetDownloadData(categories []string, startDate, endDate int64) (map[string]interface{}, error) {
-	result := make(map[string]interface{})
-
-	// Always get keywords
+func (d *Dashboard) GetDownloadData(categories []string, startDate, endDate int64) (*model.DownloadData, error) {
+	// Keyword 데이터 조회
 	keywords, err := d.dashboardRepository.GetKeywordsByDateRange(startDate, endDate, categories)
 	if err != nil {
-		return nil, err
-	}
-	result["dn_keywords"] = keywords
-
-	// Get data for each requested category
-	for _, category := range categories {
-		switch category {
-		case "news":
-			news, err := d.dashboardRepository.NewsRepository.GetNewsByDateRange(startDate, endDate)
-			if err != nil {
-				return nil, err
-			}
-			result["dn_news"] = news
-
-		case "realtime-search":
-			realtimeSearch, err := d.dashboardRepository.RealtimeSearchRepository.GetRealtimeSearchByDateRange(startDate, endDate)
-			if err != nil {
-				return nil, err
-			}
-			result["dn_realtime_search"] = realtimeSearch
-
-		case "music":
-			music, err := d.dashboardRepository.MusicRepository.GetMusicByDateRange(startDate, endDate)
-			if err != nil {
-				return nil, err
-			}
-			result["dn_music"] = music
-		}
+		return nil, fmt.Errorf("error getting keywords: %v", err)
 	}
 
-	return result, nil
+	// News 데이터 조회
+	news, err := d.dashboardRepository.NewsRepository.GetNewsByDateRange(startDate, endDate)
+	if err != nil {
+		return nil, fmt.Errorf("error getting news: %v", err)
+	}
+
+	// RealtimeSearch 데이터 조회
+	realtimeSearch, err := d.dashboardRepository.RealtimeSearchRepository.GetRealtimeSearchByDateRange(startDate, endDate)
+	if err != nil {
+		return nil, fmt.Errorf("error getting realtime search: %v", err)
+	}
+
+	// Music 데이터 조회
+	music, err := d.dashboardRepository.MusicRepository.GetMusicByDateRange(startDate, endDate)
+	if err != nil {
+		return nil, fmt.Errorf("error getting music: %v", err)
+	}
+
+	return &model.DownloadData{
+		Keywords:        keywords,
+		News:           news,
+		RealtimeSearch: realtimeSearch,
+		Music:          music,
+	}, nil
 }

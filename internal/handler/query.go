@@ -176,5 +176,11 @@ func (h *Handler) GetDownloadData(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, data)
+	// Create response with ApiResponse
+	response := &model.DownloadDataResponse{
+		ApiResponse: pkg.NewApiResponse("Success"),
+		Result:      data,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
