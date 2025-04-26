@@ -68,7 +68,7 @@ func (h *Handler) GetMusicAndNews(c *gin.Context) {
 	h.okResponse(c, model.AllCategoriesResponse{
 		ApiResponse: pkg.NewApiResponse("SUCCESS"),
 		Musics:      musics,
-		News:        news,
+		News:        []*model.News{news},
 	})
 }
 
@@ -108,7 +108,7 @@ func (h *Handler) GetNewsAndRealtimeSearch(c *gin.Context) {
 	h.okResponse(c, model.AllCategoriesResponse{
 		ApiResponse:                 pkg.NewApiResponse("SUCCESS"),
 		RealtimeSearchDetailWrapper: realtimeSearchDetail.RealtimeSearchDetailWrapper,
-		News:                        news,
+		News:                        []*model.News{news},
 	})
 }
 
@@ -135,6 +135,6 @@ func (h *Handler) GetAllCategories(c *gin.Context) {
 		ApiResponse:                 pkg.NewApiResponse("SUCCESS"),
 		Musics:                      musics,
 		RealtimeSearchDetailWrapper: realtimeSearchDetail.RealtimeSearchDetailWrapper,
-		News:                        news,
+		News:                        []*model.News{news},
 	})
 }
