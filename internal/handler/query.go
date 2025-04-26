@@ -4,6 +4,9 @@ import (
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"github.com/bestkkii/saedori-api-server/pkg"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
+	"strings"
 )
 
 /**
@@ -137,4 +140,41 @@ func (h *Handler) GetAllCategories(c *gin.Context) {
 		RealtimeSearchDetailWrapper: realtimeSearchDetail.RealtimeSearchDetailWrapper,
 		News:                        []*model.News{news},
 	})
+}
+
+// GetDownloadData handles the download data request
+func (h *Handler) GetDownloadData(c *gin.Context) {
+	// Parse query parameters
+	categoryStr := c.Query("category")
+	startDateStr := c.Query("start_date")
+	endDateStr := c.Query("end_date")
+
+	// Split category string into array
+	categories := strings.Split(categoryStr, ",")
+	if len(categories) == 0 || categoryStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "category parameter is required"})
+		return
+	}
+
+	// Parse dates
+	startDate, err := strconv.ParseInt(startDateStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid start_date parameter"})
+		return
+	}
+
+	endDate, err := strconv.ParseInt(endDateStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid end_date parameter"})
+		return
+	}
+
+	// Get data from service
+	data, err := h.dashboardService.GetDownloadData(categories, startDate, endDate)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, data)
 }

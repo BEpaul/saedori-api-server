@@ -86,3 +86,43 @@ func (d *Dashboard) GetNewsDetails() (*model.News, error) {
 	}
 	return newsList, nil
 }
+
+// GetDownloadData returns data for download based on categories and date range
+func (d *Dashboard) GetDownloadData(categories []string, startDate, endDate int64) (map[string]interface{}, error) {
+	result := make(map[string]interface{})
+
+	// Always get keywords
+	keywords, err := d.dashboardRepository.GetKeywordsByDateRange(startDate, endDate, categories)
+	if err != nil {
+		return nil, err
+	}
+	result["dn_keywords"] = keywords
+
+	// Get data for each requested category
+	for _, category := range categories {
+		switch category {
+		case "news":
+			news, err := d.dashboardRepository.NewsRepository.GetNewsByDateRange(startDate, endDate)
+			if err != nil {
+				return nil, err
+			}
+			result["dn_news"] = news
+
+		case "realtime-search":
+			realtimeSearch, err := d.dashboardRepository.RealtimeSearchRepository.GetRealtimeSearchByDateRange(startDate, endDate)
+			if err != nil {
+				return nil, err
+			}
+			result["dn_realtime_search"] = realtimeSearch
+
+		case "music":
+			music, err := d.dashboardRepository.MusicRepository.GetMusicByDateRange(startDate, endDate)
+			if err != nil {
+				return nil, err
+			}
+			result["dn_music"] = music
+		}
+	}
+
+	return result, nil
+}

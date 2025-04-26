@@ -23,3 +23,8 @@ type MusicDetail struct {
     Title  string `json:"title" binding:"required"`
     URL    string `json:"url" binding:"required"`
 }
+
+type MusicDownload struct {
+	MusicData MusicRegion `bson:"music" json:"music"`
+	CreatedAt int         `bson:"created_at" json:"created_at"`
+}

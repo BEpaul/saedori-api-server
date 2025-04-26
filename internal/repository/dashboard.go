@@ -15,6 +15,8 @@ type DashboardRepository struct {
 	MongoDB *mongo.Client
 	NewsRepository *NewsRepository
 	KeywordRepository *KeywordRepository
+	RealtimeSearchRepository *RealtimeSearchRepository
+	MusicRepository *MusicRepository
 }
 
 func newDashboardRepository() *DashboardRepository {
@@ -27,6 +29,8 @@ func newDashboardRepository() *DashboardRepository {
 		MongoDB: client,
 		NewsRepository: newNewsRepository(client),
 		KeywordRepository: newKeywordRepository(client),
+		RealtimeSearchRepository: newRealtimeSearchRepository(client),
+		MusicRepository: newMusicRepository(client),
 	}
 }
 
@@ -118,4 +122,53 @@ func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, 
     }
 	
     return results, nil
+}
+
+// GetKeywordsByDateRange returns keywords within the specified date range
+func (d *DashboardRepository) GetKeywordsByDateRange(startDate, endDate int64, categories []string) ([]*model.Keyword, error) {
+	collection := d.getCollection("Keyword")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// 기본 필터: created_at 범위
+	filter := bson.M{
+		"created_at": bson.M{
+			"$gte": startDate,
+			"$lte": endDate,
+		},
+	}
+
+	// 카테고리 매핑
+	categoryMap := map[string]string{
+		"news":           "news",
+		"realtime-search": "search_word",
+		"music":          "music",
+		"coin":           "coin",
+	}
+
+	// 카테고리 필터 추가
+	if len(categories) > 0 {
+		var categoryFilters []bson.M
+		for _, category := range categories {
+			if mongoCategory, exists := categoryMap[category]; exists {
+				categoryFilters = append(categoryFilters, bson.M{"category": mongoCategory})
+			}
+		}
+		if len(categoryFilters) > 0 {
+			filter["$or"] = categoryFilters
+		}
+	}
+
+	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
+	if err != nil {
+		return nil, fmt.Errorf("error getting keywords: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	var keywords []*model.Keyword
+	if err = cursor.All(ctx, &keywords); err != nil {
+		return nil, fmt.Errorf("error decoding keywords: %v", err)
+	}
+
+	return keywords, nil
 }

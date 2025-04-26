@@ -10,7 +10,7 @@ type RealtimeSearch struct {
 	Country			 string           `bson:"country" json:"country" binding:"required"`
 	SearchWord   string           `bson:"search_word" json:"search_word" binding:"required"`
 	Rank         int64              `bson:"rank" json:"rank" binding:"required"`
-	CreatedAt    int64              `bson:"created_at" json:"created_at" binding:"required"`
+	CreatedAt    int              `bson:"created_at" json:"created_at" binding:"required"`
 }
 
 type RealtimeSearchDetail struct {
@@ -25,4 +25,9 @@ type RealtimeSearchDetailWrapper struct {
 type RealtimeSearchDetailResponse struct {
 	*pkg.ApiResponse
 	RealtimeSearchDetailWrapper RealtimeSearchDetailWrapper `json:"result"`
+}
+
+type RealtimeSearchDownload struct {
+	CreatedAt      int             `bson:"created_at" json:"created_at"`
+	RealtimeSearch RealtimeSearchDetailWrapper `json:"realtime_search"`
 }
