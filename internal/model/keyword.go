@@ -22,3 +22,9 @@ type GetKeywordsListResponse struct {
 	*pkg.ApiResponse
 	Keywords []*Keywords `json:"top3_keywords"`
 }
+
+type Keyword struct {
+	Category  string   `bson:"category" json:"category"`
+	CreatedAt int64    `bson:"created_at" json:"created_at"`
+	Keywords  []string `bson:"keyword" json:"keyword"`
+}

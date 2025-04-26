@@ -20,7 +20,7 @@ func NewRouter(service *service.Service) *Router {
 
 	// endpoints
 	apiV1.GET("/keywords", h.GetKeywordsList) // 오늘의 단어 조회 요청
-	// apiV1.GET("/download", h.다운로드하는 함수) // 컨텐츠 다운로드 요청
+	apiV1.GET("/download", h.GetDownloadData)
 	apiV1.GET("/interest/detail", h.GetInterestDetail) // 관심사 분야 상세 데이터 요청. ?category= 쿼리 파라미터 필요
 	return r
 }

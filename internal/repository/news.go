@@ -21,6 +21,12 @@ func newNewsRepository(mongoDB *mongo.Client) *NewsRepository {
 	}
 }
 
+func (n *NewsRepository) getCollection(collectionName string) *mongo.Collection {
+	database := n.MongoDB.Database("saedori")
+	collection := database.Collection(collectionName)
+	return collection
+}
+
 func (n *NewsRepository) GetNewsDetails() (*model.News, error) {
 	database := n.MongoDB.Database("saedori")
 	collection := database.Collection("News")
@@ -38,4 +44,31 @@ func (n *NewsRepository) GetNewsDetails() (*model.News, error) {
 	}
 
 	return &news, nil
+}
+
+// GetNewsByDateRange returns news within the specified date range
+func (n *NewsRepository) GetNewsByDateRange(startDate, endDate int64) ([]*model.News, error) {
+	collection := n.getCollection("News")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	filter := bson.M{
+		"created_at": bson.M{
+			"$gte": startDate,
+			"$lte": endDate,
+		},
+	}
+
+	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
+	if err != nil {
+		return nil, fmt.Errorf("error getting news: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	var results []*model.News
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, fmt.Errorf("error decoding news: %v", err)
+	}
+
+	return results, nil
 } 
