@@ -22,7 +22,7 @@ func NewCmd() *Cmd {
 	}
 
 	c.repository = repository.NewRepository()
-	dashRepo := &scheduler.Dashboard{DashboardRepository: c.repository.Dashboard}
+	dashRepo := &scheduler.Dashboard{DashboardRepository: c.repository.Dashboard, Config: c.config}
 	dashRepo.StartCrawlingScheduler()
 
 	c.service = service.NewService(c.repository)
