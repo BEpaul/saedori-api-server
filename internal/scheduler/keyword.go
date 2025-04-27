@@ -14,6 +14,7 @@ type KeywordScheduler struct {
 	musicScheduler          *MusicScheduler
 	newsScheduler           *NewsScheduler
 	realtimeSearchScheduler *RealtimeSearchScheduler
+	coinScheduler           *CoinScheduler
 	keywordRepository       *repository.KeywordRepository
 }
 
@@ -49,6 +50,7 @@ func (k *KeywordScheduler) putKeywords() {
 	k.processKeywords("music", k.musicScheduler.GetKeywordsFromMusics)
 	k.processKeywords("news", k.newsScheduler.GetKeywordsFromNewsData)
 	k.processKeywords("realtime_search", k.realtimeSearchScheduler.GetKeywordsFromRealtimeSearchData)
+	k.processKeywords("coin", k.coinScheduler.GetCoinChangeRate)
 }
 
 func (k *KeywordScheduler) processKeywords(category string, getKeywordsFunc func() ([]string, error)) {

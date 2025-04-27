@@ -28,4 +28,5 @@ func Errorf(code int64, args ...interface{}) error {
 	} else {
 		log.Fatalf("unknown error code: %d", code)
 	}
+	return nil
 }

@@ -39,7 +39,7 @@ func (n *NewsRepository) GetNewsDetails() (*model.News, error) {
 	var news model.News
 	err := collection.FindOne(ctx, bson.M{}, opts).Decode(&news)
 	if err != nil {
-		log.Fatalf("Error getting latest news:", err)
+		log.Fatal("Error getting latest news:", err)
 		return nil, err
 	}
 
