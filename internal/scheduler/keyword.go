@@ -25,6 +25,23 @@ func KeywordSchedulerService(dashboardService *service.Dashboard, keywordReposit
 }
 
 func (k *KeywordScheduler) StartKeywordScheduler() {
+	go func() {
+		for {
+			now := time.Now()
+			next := time.Date(now.Year(), now.Month(), now.Day(), 7, 10, 0, 0, now.Location())
+			if now.After(next) {
+				next = next.Add(24 * time.Hour)
+			}
+			duration := next.Sub(now)
+			time.AfterFunc(duration, func() {
+				k.putKeywords()
+			})
+			time.Sleep(duration + 1*time.Second)
+		}
+	}()
+}
+
+func (k *KeywordScheduler) putKeywords() {
 	k.musicScheduler = MusicService(k.dashboardService)
 	k.newsScheduler = NewsService(k.dashboardService)
 	k.realtimeSearchScheduler = RealtimeSearchService(k.dashboardService)
