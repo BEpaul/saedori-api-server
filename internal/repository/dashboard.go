@@ -12,11 +12,12 @@ import (
 )
 
 type DashboardRepository struct {
-	MongoDB *mongo.Client
-	NewsRepository *NewsRepository
-	KeywordRepository *KeywordRepository
+	MongoDB                  *mongo.Client
+	NewsRepository           *NewsRepository
+	KeywordRepository        *KeywordRepository
 	RealtimeSearchRepository *RealtimeSearchRepository
-	MusicRepository *MusicRepository
+	MusicRepository          *MusicRepository
+	ScheduleRepository       *ScheduleRepository
 }
 
 func newDashboardRepository() *DashboardRepository {
@@ -26,11 +27,12 @@ func newDashboardRepository() *DashboardRepository {
 	}
 
 	return &DashboardRepository{
-		MongoDB: client,
-		NewsRepository: newNewsRepository(client),
-		KeywordRepository: newKeywordRepository(client),
+		MongoDB:                  client,
+		NewsRepository:           newNewsRepository(client),
+		KeywordRepository:        newKeywordRepository(client),
 		RealtimeSearchRepository: newRealtimeSearchRepository(client),
-		MusicRepository: newMusicRepository(client),
+		MusicRepository:          newMusicRepository(client),
+		ScheduleRepository:       newScheduleRepository(client),
 	}
 }
 
@@ -78,12 +80,12 @@ func (d *DashboardRepository) GetRealtimeSearchDetails() ([]*model.RealtimeSearc
 
 	krList, err := d.GetRealtimeSearchesByCountry(ctx, "kr", 10)
 	if err != nil {
-			return nil, nil, err
+		return nil, nil, err
 	}
 
 	usList, err := d.GetRealtimeSearchesByCountry(ctx, "us", 10)
 	if err != nil {
-			return nil, nil,err
+		return nil, nil, err
 	}
 
 	return krList, usList, nil
@@ -91,37 +93,37 @@ func (d *DashboardRepository) GetRealtimeSearchDetails() ([]*model.RealtimeSearc
 
 // 국가별로 데이터를 조회하는 함수
 func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, country string, count int64) ([]*model.RealtimeSearch, error) {
-    collection := d.getCollection("RealtimeSearch")
+	collection := d.getCollection("RealtimeSearch")
 
-    cursor, err := collection.Find(ctx, 
-        bson.M{"country": country},
-        options.Find().
-				SetSort(bson.D{
-					{"created_at", -1},
-					{"rank", 1},
+	cursor, err := collection.Find(ctx,
+		bson.M{"country": country},
+		options.Find().
+			SetSort(bson.D{
+				{"created_at", -1},
+				{"rank", 1},
 			}).
-            SetLimit(count),
-    )
-    if err != nil {
-        return nil, fmt.Errorf("error getting %s realtime search list: %v", country, err)
-    }
-    defer cursor.Close(ctx)
+			SetLimit(count),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error getting %s realtime search list: %v", country, err)
+	}
+	defer cursor.Close(ctx)
 
-    var results []*model.RealtimeSearch
-		
-    for cursor.Next(ctx) {
-        var realtimeSearch model.RealtimeSearch
-        if err := cursor.Decode(&realtimeSearch); err != nil {
-            return nil, fmt.Errorf("error decoding %s realtime search: %v", country, err)
-        }
-        results = append(results, &realtimeSearch)
-    }
+	var results []*model.RealtimeSearch
 
-    if err := cursor.Err(); err != nil {
-        return nil, fmt.Errorf("%s cursor error: %v", country, err)
-    }
-	
-    return results, nil
+	for cursor.Next(ctx) {
+		var realtimeSearch model.RealtimeSearch
+		if err := cursor.Decode(&realtimeSearch); err != nil {
+			return nil, fmt.Errorf("error decoding %s realtime search: %v", country, err)
+		}
+		results = append(results, &realtimeSearch)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("%s cursor error: %v", country, err)
+	}
+
+	return results, nil
 }
 
 // GetKeywordsByDateRange returns keywords within the specified date range
@@ -140,10 +142,10 @@ func (d *DashboardRepository) GetKeywordsByDateRange(startDate, endDate int64, c
 
 	// 카테고리 매핑
 	categoryMap := map[string]string{
-		"news":           "news",
+		"news":            "news",
 		"realtime-search": "search_word",
-		"music":          "music",
-		"coin":           "coin",
+		"music":           "music",
+		"coin":            "coin",
 	}
 
 	// 카테고리 필터 추가
