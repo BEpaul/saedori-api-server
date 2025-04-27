@@ -30,9 +30,9 @@ func (n *NewsScheduler) GetKeywordsFromNewsData() ([]string, error) {
 	// 결과를 저장할 배열
 	keywords := make([]string, 0, 3)
 
-	// 가장 최신 뉴스 데이터에서 title 3개 가져오기
-	if len(newsData) > 0 && len(newsData[0].NewsItems) > 0 {
-		for i, newsItem := range newsData[0].NewsItems {
+	// NewsItems가 있는지 확인
+	if newsData != nil && len(newsData.NewsItems) > 0 {
+		for _, newsItem := range newsData.NewsItems {
 			// 제목이 비어있는지 확인
 			if newsItem.Title == "" {
 				continue
