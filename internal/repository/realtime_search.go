@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"sort"
 	"time"
 
@@ -44,7 +44,8 @@ func (r *RealtimeSearchRepository) GetRealtimeSearchByDateRange(startDate, endDa
 
 	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
 	if err != nil {
-		return nil, fmt.Errorf("error getting realtime search: %v", err)
+		log.Fatalf("error getting realtime search: %v", err)
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
@@ -54,7 +55,8 @@ func (r *RealtimeSearchRepository) GetRealtimeSearchByDateRange(startDate, endDa
 	for cursor.Next(ctx) {
 		var search model.RealtimeSearch
 		if err := cursor.Decode(&search); err != nil {
-			return nil, fmt.Errorf("error decoding realtime search: %v", err)
+			log.Fatalf("error decoding realtime search: %v", err)
+			return nil, err
 		}
 
 		// 해당 created_at의 데이터가 없으면 새로 생성
@@ -96,4 +98,4 @@ func (r *RealtimeSearchRepository) GetRealtimeSearchByDateRange(startDate, endDa
 	})
 
 	return results, nil
-} 
+}

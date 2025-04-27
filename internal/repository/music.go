@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -43,14 +43,16 @@ func (m *MusicRepository) GetMusicByDateRange(startDate, endDate int64) ([]*mode
 
 	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
 	if err != nil {
-		return nil, fmt.Errorf("error getting music: %v", err)
+		log.Fatalf("error getting music: %v", err)
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	var results []*model.MusicDownload
 	if err = cursor.All(ctx, &results); err != nil {
-		return nil, fmt.Errorf("error decoding music: %v", err)
+		log.Fatalf("error decoding music: %v", err)
+		return nil, err
 	}
 
 	return results, nil
-} 
+}
