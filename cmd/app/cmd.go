@@ -21,12 +21,14 @@ func NewCmd() *Cmd {
 		config: config.NewConfig(),
 	}
 
-	dashboardRepo := repository.NewRepository().Dashboard
-	dashboard := &scheduler.Dashboard{DashboardRepository: dashboardRepo}
-	dashboard.StartScheduler()
-
 	c.repository = repository.NewRepository()
+	dashRepo := &scheduler.Dashboard{DashboardRepository: c.repository.Dashboard}
+	dashRepo.StartCrawlingScheduler()
+
 	c.service = service.NewService(c.repository)
+	keywordScheduler := scheduler.KeywordSchedulerService(c.service.Dashboard, c.repository.Dashboard.KeywordRepository)
+	keywordScheduler.StartKeywordScheduler()
+
 	c.router = router.NewRouter(c.service)
 	c.router.ServerStart(c.config.Server.Port)
 

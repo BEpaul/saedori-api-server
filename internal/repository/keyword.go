@@ -43,4 +43,19 @@ func (k *KeywordRepository) GetKeywords() ([]*model.Keywords, error) {
 	}
 
 	return keywords, nil
-} 
+}
+
+func (k *KeywordRepository) SaveKeywords(keywords []*model.Keywords) error {
+	database := k.MongoDB.Database("saedori")
+	collection := database.Collection("Keyword")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	for _, keyword := range keywords {
+		_, err := collection.InsertOne(ctx, keyword)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
