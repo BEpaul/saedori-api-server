@@ -16,7 +16,7 @@ type Dashboard struct {
 	DashboardRepository *repository.DashboardRepository
 }
 
-func (d *Dashboard) StartScheduler() {
+func (d *Dashboard) StartCrawlingScheduler() {
 	go func() {
 		for {
 			now := time.Now()
