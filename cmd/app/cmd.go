@@ -4,6 +4,8 @@ import (
 	"github.com/bestkkii/saedori-api-server/internal/config"
 	"github.com/bestkkii/saedori-api-server/internal/repository"
 	"github.com/bestkkii/saedori-api-server/internal/router"
+
+	"github.com/bestkkii/saedori-api-server/internal/scheduler"
 	"github.com/bestkkii/saedori-api-server/internal/service"
 )
 
@@ -18,6 +20,10 @@ func NewCmd() *Cmd {
 	c := &Cmd{
 		config: config.NewConfig(),
 	}
+
+	dashboardRepo := repository.NewRepository().Dashboard
+	dashboard := &scheduler.Dashboard{DashboardRepository: dashboardRepo}
+	dashboard.StartScheduler()
 
 	c.repository = repository.NewRepository()
 	c.service = service.NewService(c.repository)

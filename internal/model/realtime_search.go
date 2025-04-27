@@ -6,11 +6,11 @@ import (
 )
 
 type RealtimeSearch struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	Country			 string           `bson:"country" json:"country" binding:"required"`
-	SearchWord   string           `bson:"search_word" json:"search_word" binding:"required"`
-	Rank         int64              `bson:"rank" json:"rank" binding:"required"`
-	CreatedAt    int              `bson:"created_at" json:"created_at" binding:"required"`
+	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Country    string             `bson:"country" json:"country" binding:"required"`
+	SearchWord string             `bson:"search_word" json:"search_word" binding:"required"`
+	Rank       int64              `bson:"rank" json:"rank" binding:"required"`
+	CreatedAt  int                `bson:"created_at" json:"created_at" binding:"required"`
 }
 
 type RealtimeSearchDetail struct {
@@ -28,6 +28,11 @@ type RealtimeSearchDetailResponse struct {
 }
 
 type RealtimeSearchDownload struct {
-	CreatedAt      int             `bson:"created_at" json:"created_at"`
+	CreatedAt      int                         `bson:"created_at" json:"created_at"`
 	RealtimeSearch RealtimeSearchDetailWrapper `json:"realtime_search"`
+}
+
+type CrawledRealtimeSearch struct {
+	RealtimeSearchDetail RealtimeSearchDetail `bson:"realtime_search" json:"realtime_search"`
+	CreatedAt            int64                `bson:"created_at" json:"created_at"`
 }

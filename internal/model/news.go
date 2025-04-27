@@ -6,13 +6,13 @@ import (
 
 // FastAPI 응답을 위한 모델
 type FastAPIResponse struct {
-	*pkg.ApiResponse // Message string `json:"message"`
-	CreatedAt int64 `json:"created_at"`
-	NewsCrawl NewsCrawlResponse `json:"news_crawl"`
+	*pkg.ApiResponse                   // Message string `json:"message"`
+	CreatedAt        int64             `json:"created_at"`
+	NewsCrawl        NewsCrawlResponse `json:"news_crawl"`
 }
 
 type NewsCrawlResponse struct {
-	Crawling string `json:"crawling"`
+	Crawling string     `json:"crawling"`
 	Result   NewsResult `json:"result"`
 }
 
@@ -37,4 +37,9 @@ type NewsItem struct {
 type NewsResponse struct {
 	*pkg.ApiResponse
 	News []*News `json:"result" binding:"required"`
+}
+
+type CrawledNews struct {
+	NewsItems []NewsItem `bson:"news" json:"news" binding:"required"`
+	CreatedAt int64      `bson:"created_at" json:"created_at" binding:"required"`
 }

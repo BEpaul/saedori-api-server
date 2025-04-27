@@ -5,12 +5,12 @@ import (
 )
 
 type MusicResponse struct {
-    *pkg.ApiResponse
-    Musics []*Music `json:"result" binding:"required"`
+	*pkg.ApiResponse
+	Musics []*Music `json:"result" binding:"required"`
 }
 
 type Music struct {
-	MusicData MusicRegion         `bson:"music" json:"music"`
+	MusicData MusicRegion `bson:"music" json:"music"`
 }
 
 type MusicRegion struct {
@@ -19,12 +19,17 @@ type MusicRegion struct {
 }
 
 type MusicDetail struct {
-    Singer string `json:"singer" binding:"required"`
-    Title  string `json:"title" binding:"required"`
-    URL    string `json:"url" binding:"required"`
+	Singer string `json:"singer" binding:"required"`
+	Title  string `json:"title" binding:"required"`
+	URL    string `json:"url" binding:"required"`
 }
 
 type MusicDownload struct {
 	MusicData MusicRegion `bson:"music" json:"music"`
 	CreatedAt int         `bson:"created_at" json:"created_at"`
+}
+
+type CrawledMusic struct {
+	Music     MusicRegion `bson:"music" json:"music"`
+	CreatedAt int64       `bson:"created_at" json:"created_at"`
 }
