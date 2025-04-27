@@ -1,7 +1,6 @@
 package scheduler
 
 import (
-	"log"
 	"github.com/bestkkii/saedori-api-server/internal/service"
 )
 
@@ -15,8 +14,8 @@ func MusicService(dashboardService *service.Dashboard) *MusicScheduler {
 	}
 }
 
-func (d *Dashboard) GetKeywordsFromMusics() ([]string, error) {
-	musics, err := d.dashboardRepository.GetMusics()
+func (m *MusicScheduler) GetKeywordsFromMusics() ([]string, error) {
+	musics, err := m.dashboardService.GetMusicList()
 	if err != nil {
 		return nil, err
 	}
@@ -24,13 +23,13 @@ func (d *Dashboard) GetKeywordsFromMusics() ([]string, error) {
 	keywords := make([]string, 0)
 	for _, music := range musics {
 		if len(music.MusicData.Domestic) > 0 {
-			keywords = append(keywords, music.MusicData.Domestic[0].Title)		//국내 1위
+			keywords = append(keywords, music.MusicData.Domestic[0].Title) //국내 1위
 		}
 		if len(music.MusicData.Global) > 0 {
-			keywords = append(keywords, music.MusicData.Global[0].Title)		//해외 1위
+			keywords = append(keywords, music.MusicData.Global[0].Title) //해외 1위
 		}
 		if len(music.MusicData.Domestic) > 0 {
-			keywords = append(keywords, music.MusicData.Domestic[1].Title)		//국내 2위
+			keywords = append(keywords, music.MusicData.Domestic[1].Title) //국내 2위
 		}
 	}
 
