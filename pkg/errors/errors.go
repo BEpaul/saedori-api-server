@@ -1,6 +1,8 @@
 package errors
 
-import "fmt"
+import (
+	"log"
+)
 
 const (
 	invalidParameter    = 1000
@@ -22,8 +24,8 @@ var errMessage = map[int64]string{
 
 func Errorf(code int64, args ...interface{}) error {
 	if message, ok := errMessage[code]; ok {
-		return fmt.Errorf("%s : %v", message, args)
+		log.Fatalf("%s : %v", message, args)
 	} else {
-		return fmt.Errorf("unknown error code: %d", code)
+		log.Fatalf("unknown error code: %d", code)
 	}
 }

@@ -1,7 +1,8 @@
 package service
 
 import (
-	"fmt"
+	"log"
+
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"github.com/bestkkii/saedori-api-server/internal/repository"
 )
@@ -58,7 +59,7 @@ func (d *Dashboard) GetRealtimeSearchDetailList() (*model.RealtimeSearchDetailRe
 
 	for _, item := range krList {
 		krWordList = append(krWordList, item.SearchWord)
-	}	
+	}
 
 	for _, item := range usList {
 		usWordList = append(usWordList, item.SearchWord)
@@ -95,7 +96,8 @@ func (d *Dashboard) GetDownloadData(categories []string, startDate, endDate int6
 	// Always get keywords
 	keywords, err := d.dashboardRepository.GetKeywordsByDateRange(startDate, endDate, categories)
 	if err != nil {
-		return nil, fmt.Errorf("error getting keywords: %v", err)
+		log.Fatalf("error getting keywords: %v", err)
+		return nil, err
 	}
 	result.Keywords = keywords
 
@@ -105,21 +107,24 @@ func (d *Dashboard) GetDownloadData(categories []string, startDate, endDate int6
 		case "news":
 			news, err := d.dashboardRepository.NewsRepository.GetNewsByDateRange(startDate, endDate)
 			if err != nil {
-				return nil, fmt.Errorf("error getting news: %v", err)
+				log.Fatalf("error getting news: %v", err)
+				return nil, err
 			}
 			result.News = news
 
 		case "realtime-search":
 			realtimeSearch, err := d.dashboardRepository.RealtimeSearchRepository.GetRealtimeSearchByDateRange(startDate, endDate)
 			if err != nil {
-				return nil, fmt.Errorf("error getting realtime search: %v", err)
+				log.Fatalf("error getting realtime search: %v", err)
+				return nil, err
 			}
 			result.RealtimeSearch = realtimeSearch
 
 		case "music":
 			music, err := d.dashboardRepository.MusicRepository.GetMusicByDateRange(startDate, endDate)
 			if err != nil {
-				return nil, fmt.Errorf("error getting music: %v", err)
+				log.Fatalf("error getting music: %v", err)
+				return nil, err
 			}
 			result.Music = music
 		}

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/bestkkii/saedori-api-server/internal/model"
@@ -35,11 +35,11 @@ func (n *NewsRepository) GetNewsDetails() (*model.News, error) {
 
 	// created_at 인덱스를 활용하여 최신 데이터 조회
 	opts := options.FindOne().SetSort(bson.D{{Key: "created_at", Value: -1}})
-	
+
 	var news model.News
 	err := collection.FindOne(ctx, bson.M{}, opts).Decode(&news)
 	if err != nil {
-		fmt.Println("Error getting latest news:", err)
+		log.Fatalf("Error getting latest news:", err)
 		return nil, err
 	}
 
@@ -61,14 +61,16 @@ func (n *NewsRepository) GetNewsByDateRange(startDate, endDate int64) ([]*model.
 
 	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
 	if err != nil {
-		return nil, fmt.Errorf("error getting news: %v", err)
+		log.Fatalf("error getting news: %v", err)
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	var results []*model.News
 	if err = cursor.All(ctx, &results); err != nil {
-		return nil, fmt.Errorf("error decoding news: %v", err)
+		log.Fatalf("error decoding news: %v", err)
+		return nil, err
 	}
 
 	return results, nil
-} 
+}

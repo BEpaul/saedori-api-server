@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -14,14 +14,16 @@ func ConnectMongoDB() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI(mongoUri)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
-		return nil, fmt.Errorf("Error connecting to MongoDB: %v", err)
+		log.Fatalf("Error connecting to MongoDB: %v", err)
+		return nil, err
 	}
 
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("Error pinging MongoDB: %v", err)
+		log.Fatalf("Error pinging MongoDB: %v", err)
+		return nil, err
 	}
 
-	fmt.Println("Connected to MongoDB!")
+	log.Println("Connected to MongoDB!")
 	return client, nil
 }

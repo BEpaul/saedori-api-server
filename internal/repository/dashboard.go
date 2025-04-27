@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/bestkkii/saedori-api-server/internal/model"
@@ -23,7 +23,7 @@ type DashboardRepository struct {
 func newDashboardRepository() *DashboardRepository {
 	client, err := ConnectMongoDB()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	return &DashboardRepository{
@@ -54,7 +54,7 @@ func (d *DashboardRepository) GetMusics() ([]*model.Music, error) {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
 		}
-		fmt.Println("Error getting music:", err)
+		log.Fatalf("Error getting music: %v", err)
 		return nil, err
 	}
 
@@ -105,7 +105,8 @@ func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, 
 			SetLimit(count),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("error getting %s realtime search list: %v", country, err)
+		log.Fatalf("error getting %s realtime search list: %v", country, err)
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
@@ -114,13 +115,15 @@ func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, 
 	for cursor.Next(ctx) {
 		var realtimeSearch model.RealtimeSearch
 		if err := cursor.Decode(&realtimeSearch); err != nil {
-			return nil, fmt.Errorf("error decoding %s realtime search: %v", country, err)
+			log.Fatalf("error decoding %s realtime search: %v", country, err)
+			return nil, err
 		}
 		results = append(results, &realtimeSearch)
 	}
 
 	if err := cursor.Err(); err != nil {
-		return nil, fmt.Errorf("%s cursor error: %v", country, err)
+		log.Fatalf("%s cursor error: %v", country, err)
+		return nil, err
 	}
 
 	return results, nil
@@ -163,13 +166,15 @@ func (d *DashboardRepository) GetKeywordsByDateRange(startDate, endDate int64, c
 
 	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
 	if err != nil {
-		return nil, fmt.Errorf("error getting keywords: %v", err)
+		log.Fatalf("error getting keywords: %v", err)
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	var keywords []*model.Keyword
 	if err = cursor.All(ctx, &keywords); err != nil {
-		return nil, fmt.Errorf("error decoding keywords: %v", err)
+		log.Fatalf("error decoding keywords: %v", err)
+		return nil, err
 	}
 
 	return keywords, nil
