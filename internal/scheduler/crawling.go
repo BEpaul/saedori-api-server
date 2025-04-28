@@ -8,12 +8,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/bestkkii/saedori-api-server/internal/config"
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"github.com/bestkkii/saedori-api-server/internal/repository"
 )
 
 type Dashboard struct {
 	DashboardRepository *repository.DashboardRepository
+	Config     *config.Config
 }
 
 func (d *Dashboard) StartCrawlingScheduler() {
@@ -34,7 +36,7 @@ func (d *Dashboard) StartCrawlingScheduler() {
 }
 
 func (d *Dashboard) fetchData() {
-	resp, err := http.Get("http://localhost:8000/api/v1/crawl")
+	resp, err := http.Get(d.Config.Server.CrawlApiBaseUrl + "/api/v1/crawl")
 	if err != nil {
 		log.Println("Error fetching data:", err)
 		return
