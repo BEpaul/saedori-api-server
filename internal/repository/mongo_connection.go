@@ -14,13 +14,13 @@ func ConnectMongoDB() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI(mongoUri)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
-		log.Fatalf("Error connecting to MongoDB: %v", err)
+		log.Println("Error connecting to MongoDB:", err)
 		return nil, err
 	}
 
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		log.Fatalf("Error pinging MongoDB: %v", err)
+		log.Println("Error pinging MongoDB:", err)
 		return nil, err
 	}
 

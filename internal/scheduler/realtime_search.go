@@ -21,9 +21,19 @@ func(r *RealtimeSearchScheduler) GetKeywordsFromRealtimeSearchData() ([]string, 
 	realtimeSearchData, err := r.dashboardService.GetRealtimeSearchList()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println("실시간 검색어 데이터 조회 실패:", err)
+		return nil, err
 	}
 
 	return realtimeSearchData[:3], nil
+}
+
+func (r *RealtimeSearchScheduler) GetRealtimeSearchData() error {
+	err := r.realtimeSearchRepository.GetRealtimeSearchData()
+	if err != nil {
+		log.Println("실시간 검색어 데이터 조회 실패:", err)
+		return err
+	}
+	return nil
 }
 

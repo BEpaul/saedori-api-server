@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -24,9 +25,19 @@ var errMessage = map[int64]string{
 
 func Errorf(code int64, args ...interface{}) error {
 	if message, ok := errMessage[code]; ok {
-		log.Fatalf("%s : %v", message, args)
+		log.Println(message, args)
+		return fmt.Errorf("%s : %v", message, args)
 	} else {
-		log.Fatalf("unknown error code: %d", code)
+		log.Println("unknown error code:", code)
+		return fmt.Errorf("unknown error code: %d", code)
 	}
-	return nil
+}
+
+func (e *Error) Error() string {
+	if e.Code == 0 {
+		log.Println(e.Message, e.Args)
+		return fmt.Sprintf("%s : %v", e.Message, e.Args)
+	}
+	log.Println("unknown error code:", e.Code)
+	return fmt.Sprintf("unknown error code: %d", e.Code)
 }

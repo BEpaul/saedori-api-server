@@ -96,7 +96,7 @@ func (d *Dashboard) GetDownloadData(categories []string, startDate, endDate int6
 	// Always get keywords
 	keywords, err := d.dashboardRepository.GetKeywordsByDateRange(startDate, endDate, categories)
 	if err != nil {
-		log.Fatalf("error getting keywords: %v", err)
+		log.Println("error getting keywords:", err)
 		return nil, err
 	}
 	result.Keywords = keywords
@@ -107,24 +107,22 @@ func (d *Dashboard) GetDownloadData(categories []string, startDate, endDate int6
 		case "news":
 			news, err := d.dashboardRepository.NewsRepository.GetNewsByDateRange(startDate, endDate)
 			if err != nil {
-				log.Fatalf("error getting news: %v", err)
-				return nil, err
+				log.Println("error getting news:", err)
+				continue
 			}
 			result.News = news
-
 		case "realtime-search":
 			realtimeSearch, err := d.dashboardRepository.RealtimeSearchRepository.GetRealtimeSearchByDateRange(startDate, endDate)
 			if err != nil {
-				log.Fatalf("error getting realtime search: %v", err)
-				return nil, err
+				log.Println("error getting realtime search:", err)
+				continue
 			}
 			result.RealtimeSearch = realtimeSearch
-
 		case "music":
 			music, err := d.dashboardRepository.MusicRepository.GetMusicByDateRange(startDate, endDate)
 			if err != nil {
-				log.Fatalf("error getting music: %v", err)
-				return nil, err
+				log.Println("error getting music:", err)
+				continue
 			}
 			result.Music = music
 		}

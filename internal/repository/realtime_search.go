@@ -44,7 +44,7 @@ func (r *RealtimeSearchRepository) GetRealtimeSearchByDateRange(startDate, endDa
 
 	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
 	if err != nil {
-		log.Fatalf("error getting realtime search: %v", err)
+		log.Println("error getting realtime search:", err)
 		return nil, err
 	}
 	defer cursor.Close(ctx)
@@ -55,7 +55,7 @@ func (r *RealtimeSearchRepository) GetRealtimeSearchByDateRange(startDate, endDa
 	for cursor.Next(ctx) {
 		var search model.RealtimeSearch
 		if err := cursor.Decode(&search); err != nil {
-			log.Fatalf("error decoding realtime search: %v", err)
+			log.Println("error decoding realtime search:", err)
 			return nil, err
 		}
 
