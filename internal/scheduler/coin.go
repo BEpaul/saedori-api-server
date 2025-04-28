@@ -105,7 +105,7 @@ func calculateChanges(tickers []model.Ticker, marketMap map[string]string) []mod
 	var changes []model.ChangeInfo
 	for _, ticker := range tickers {
 		changeRate := ticker.SignedChangeRate * 100
-		if changeRate > 5 || changeRate < -5 {
+		if changeRate > 3 || changeRate < -3 {
 			koreanName := marketMap[ticker.Market]
 			symbol := strings.TrimPrefix(ticker.Market, "KRW-")
 			changes = append(changes, model.ChangeInfo{
