@@ -26,6 +26,7 @@ func KeywordSchedulerService(dashboardService *service.Dashboard, keywordReposit
 }
 
 func (k *KeywordScheduler) StartKeywordScheduler() {
+	log.Println("KeywordSchedulerService Start")
 	go func() {
 		for {
 			now := time.Now()

@@ -19,6 +19,7 @@ type Dashboard struct {
 }
 
 func (d *Dashboard) StartCrawlingScheduler() {
+	log.Println("CrawlingSchedulerService Start")
 	go func() {
 		for {
 			now := time.Now()
