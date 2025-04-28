@@ -38,9 +38,19 @@ func (n *NewsRepository) GetNewsDetails() (*model.News, error) {
 
 	var news model.News
 	err := collection.FindOne(ctx, bson.M{}, opts).Decode(&news)
+	if err == mongo.ErrNoDocuments {
+		log.Printf("There's no latest news: %v", err)
+		return &model.News{
+			CreatedAt: 0,
+			NewsItems: []model.NewsItem{},
+		}, nil
+	}
 	if err != nil {
-		log.Fatal("Error getting latest news:", err)
-		return nil, err
+		log.Printf("Error getting latest news: %v", err)
+		return &model.News{
+			CreatedAt: 0,
+			NewsItems: []model.NewsItem{},
+		}, nil
 	}
 
 	return &news, nil
