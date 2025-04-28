@@ -63,24 +63,22 @@ func (r *RealtimeSearchRepository) GetRealtimeSearchByDateRange(startDate, endDa
 		if _, exists := groupedData[search.CreatedAt]; !exists {
 			groupedData[search.CreatedAt] = &model.RealtimeSearchDownload{
 				CreatedAt: search.CreatedAt,
-				RealtimeSearch: model.RealtimeSearchDetailWrapper{
-					RealtimeSearchDetail: model.RealtimeSearchDetail{
-						KrSearchWords: []string{},
-						UsSearchWords: []string{},
-					},
+				RealtimeSearch: model.RealtimeSearchDetail{
+					KrSearchWords: []string{},
+					UsSearchWords: []string{},
 				},
 			}
 		}
 
 		// 국가별로 검색어 추가
 		if search.Country == "kr" {
-			groupedData[search.CreatedAt].RealtimeSearch.RealtimeSearchDetail.KrSearchWords = append(
-				groupedData[search.CreatedAt].RealtimeSearch.RealtimeSearchDetail.KrSearchWords,
+			groupedData[search.CreatedAt].RealtimeSearch.KrSearchWords = append(
+				groupedData[search.CreatedAt].RealtimeSearch.KrSearchWords,
 				search.SearchWord,
 			)
 		} else if search.Country == "us" {
-			groupedData[search.CreatedAt].RealtimeSearch.RealtimeSearchDetail.UsSearchWords = append(
-				groupedData[search.CreatedAt].RealtimeSearch.RealtimeSearchDetail.UsSearchWords,
+			groupedData[search.CreatedAt].RealtimeSearch.UsSearchWords = append(
+				groupedData[search.CreatedAt].RealtimeSearch.UsSearchWords,
 				search.SearchWord,
 			)
 		}
