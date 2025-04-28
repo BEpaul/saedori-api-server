@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"time"
+	"fmt"
 
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -41,6 +42,8 @@ func (k *KeywordRepository) GetKeywords() ([]*model.Keywords, error) {
 		}
 		keywords = append(keywords, &keyword)
 	}
+
+	// fmt.Println(keywords)
 
 	return keywords, nil
 }

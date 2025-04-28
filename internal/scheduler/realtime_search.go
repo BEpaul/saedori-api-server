@@ -27,13 +27,3 @@ func(r *RealtimeSearchScheduler) GetKeywordsFromRealtimeSearchData() ([]string, 
 
 	return realtimeSearchData[:3], nil
 }
-
-func (r *RealtimeSearchScheduler) GetRealtimeSearchData() error {
-	err := r.realtimeSearchRepository.GetRealtimeSearchData()
-	if err != nil {
-		log.Println("실시간 검색어 데이터 조회 실패:", err)
-		return err
-	}
-	return nil
-}
-
