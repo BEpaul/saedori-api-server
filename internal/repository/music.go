@@ -43,14 +43,14 @@ func (m *MusicRepository) GetMusicByDateRange(startDate, endDate int64) ([]*mode
 
 	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
 	if err != nil {
-		log.Fatalf("error getting music: %v", err)
+		log.Println("error getting music:", err)
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	var results []*model.MusicDownload
 	if err = cursor.All(ctx, &results); err != nil {
-		log.Fatalf("error decoding music: %v", err)
+		log.Println("error decoding music:", err)
 		return nil, err
 	}
 

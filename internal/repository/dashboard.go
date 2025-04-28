@@ -23,7 +23,8 @@ type DashboardRepository struct {
 func newDashboardRepository() *DashboardRepository {
 	client, err := ConnectMongoDB()
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error connecting to MongoDB:", err)
+		return nil
 	}
 
 	return &DashboardRepository{
@@ -54,7 +55,7 @@ func (d *DashboardRepository) GetMusics() ([]*model.Music, error) {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
 		}
-		log.Fatalf("Error getting music: %v", err)
+		log.Println("Error getting music:", err)
 		return nil, err
 	}
 
@@ -105,7 +106,7 @@ func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, 
 			SetLimit(count),
 	)
 	if err != nil {
-		log.Fatalf("error getting %s realtime search list: %v", country, err)
+		log.Println("error getting", country, "realtime search list:", err)
 		return nil, err
 	}
 	defer cursor.Close(ctx)
@@ -122,7 +123,7 @@ func (d *DashboardRepository) GetRealtimeSearchesByCountry(ctx context.Context, 
 	}
 
 	if err := cursor.Err(); err != nil {
-		log.Fatalf("%s cursor error: %v", country, err)
+		log.Println("error decoding", country, "realtime search:", err)
 		return nil, err
 	}
 
@@ -166,14 +167,14 @@ func (d *DashboardRepository) GetKeywordsByDateRange(startDate, endDate int64, c
 
 	cursor, err := collection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}}))
 	if err != nil {
-		log.Fatalf("error getting keywords: %v", err)
+		log.Println("error getting keywords: ", err)
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
 	var keywords []*model.Keyword
 	if err = cursor.All(ctx, &keywords); err != nil {
-		log.Fatalf("error decoding keywords: %v", err)
+		log.Println("error decoding keywords: ", err)
 		return nil, err
 	}
 
