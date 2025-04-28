@@ -26,7 +26,7 @@ func (k *KeywordRepository) GetKeywords() ([]*model.Keywords, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	categories := []string{"music", "search_word", "news", "coin"}
+	categories := []string{"music", "realtime_search", "news", "coin"}
 	var keywords []*model.Keywords
 
 	for _, category := range categories {
@@ -41,8 +41,6 @@ func (k *KeywordRepository) GetKeywords() ([]*model.Keywords, error) {
 		}
 		keywords = append(keywords, &keyword)
 	}
-
-	// fmt.Println(keywords)
 
 	return keywords, nil
 }
