@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"time"
-	"fmt"
 
 	"github.com/bestkkii/saedori-api-server/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
