@@ -28,8 +28,8 @@ type RealtimeSearchDetailResponse struct {
 }
 
 type RealtimeSearchDownload struct {
-	CreatedAt      int                         `bson:"created_at" json:"created_at"`
-	RealtimeSearch RealtimeSearchDetailWrapper `json:"realtime_search"`
+	CreatedAt      int                  `bson:"created_at" json:"created_at"`
+	RealtimeSearch RealtimeSearchDetail `json:"realtime_search"`
 }
 
 type CrawledRealtimeSearch struct {
